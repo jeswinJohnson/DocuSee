@@ -164,6 +164,17 @@ class _HomeState extends State<Home> {
                           )
                         );
                       }
+
+                      if(recentsRender.length == 0){
+                        return Text(
+                          "No Recents!",
+                          style: TextStyle(
+                              fontFamily: "Mont",
+                              fontWeight: FontWeight.w900,
+                              fontSize: 25
+                            ),
+                        );
+                      }
                       return GridView.count(
                         shrinkWrap: true,
                         crossAxisCount: 2,
