@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:gdsc_round2/home.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pdfx/pdfx.dart';
 
 class pdfViewer extends StatefulWidget {
@@ -15,6 +17,7 @@ class pdfViewer extends StatefulWidget {
 
 class _pdfViewerState extends State<pdfViewer> {
   late PdfController _pdfController;
+  Box box = Hive.box("myBox");
 
   @override
   void initState() {
@@ -38,7 +41,7 @@ class _pdfViewerState extends State<pdfViewer> {
                 child: Row(
                   children: [
                     IconButton(
-                      onPressed: () => Navigator.pop(context), 
+                      onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder:(context) => Home())), 
                       icon: Icon(Icons.arrow_back_ios_rounded)
                     ),
                 
@@ -57,7 +60,17 @@ class _pdfViewerState extends State<pdfViewer> {
               flex: 10,
               child: PdfView(
                 onPageChanged: (_) => setState(() {}),
-                onDocumentLoaded: (_) => {setState(() {})},
+                onDocumentLoaded: (_) {
+
+                  Map recent = box.get("recentFiles", defaultValue: {});
+                  recent[widget.name] = {
+                    "pages":_pdfController.pagesCount,
+                    "path": widget.args
+                  };
+                  box.put("recentFiles", recent);
+
+                  setState(() {});
+                },
                 controller: _pdfController,
                 builders: PdfViewBuilders<DefaultBuilderOptions>(
                   options: const DefaultBuilderOptions(),
